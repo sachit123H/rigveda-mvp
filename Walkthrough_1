@@ -21,27 +21,35 @@ We generated a custom Vedic-themed painting to serve as the hero graphic for the
   - `Inter` (sans-serif) for system utilities and control elements.
   - `Crimson Pro` (serif) for the English translations and literary text.
   - `Noto Sans Devanagari` (Sanskrit) to ensure perfect rendering of Vedic svaras (accents).
-  - Configured `suppressHydrationWarning` on `html` and `body` elements to suppress extension class injection warning mismatches (such as ClickUp classes).
+  - Configured `suppressHydrationWarning` on `html` and `body` elements to suppress extension class injection warnings.
 - **[globals.css](file:///c:/Users/sachi/Downloads/rigveda-mvp/app/globals.css)**: Implemented styling variables for warm light paper and dark stone themes, premium custom scrollbars, and golden accent highlight glows.
 
-### 2. Main Landing Page (`/`) with UI/UX Feedback Reforms
+### 2. Main Landing Page (`/`)
 - **[page.tsx](file:///c:/Users/sachi/Downloads/rigveda-mvp/app/page.tsx)**: Converted into an interactive client component containing:
-  - **Refined Hero Hierarchy**: Swapped image caption text with a tight, direct value proposition: *"A rigorous, open-source digital corpus mapping the evolution of ancient Indic philosophy."*
-  - **Sanskrit Shloka Highlight**: Centered Mantra 1.1.1, increasing the font size and wrapping it in an elegant, golden-bordered blockquote block.
-  - **Live Demo Sandbox ("Show, Don't Tell")**: Created an interactive sandbox section. Users can click individual words in Mantra 1.1.1 to see the un-sandhied Padapatha form, root lemma, grammatical traits, and literal meanings appear in real-time.
-  - **Scannable Paradigm Comparison**: Restructured the text detailing the *Layered Disclosure Model* into a side-by-side card grid highlighting *The Traditional Overhead* (clutter, footnotes, sandhi blocks) vs *The DLIIH Solution* (clean canvas, tactile exploration, on-demand data).
+  - **Refined Hero Hierarchy**: Swapped image caption text with a tight, direct value proposition.
+  - **Sanskrit Shloka Highlight**: Centered Mantra 1.1.1, increasing the font size and wrapping it in a golden-bordered blockquote.
+  - **Live Demo Sandbox**: Created an interactive sandbox section. Users can click individual words in Mantra 1.1.1 to see the un-sandhied Padapatha form, root lemma, grammatical traits, and literal meanings appear in real-time.
+  - **Scannable Paradigm Comparison**: Restructured the text detailing the *Layered Disclosure Model* into a side-by-side card grid highlighting *The Traditional Overhead* vs *The DLIIH Solution*.
   - **TEI/XML Syntax Display**: Added a dedicated technical section demonstrating academic rigor. Features a tabbed code block toggling between raw **TEI/XML Source** and formatted **JSON Payload**.
   - **Expanded Global Navigation**: Refined the sticky header with clean links: *Home*, *Corpus Viewer*, *Interactive Sandbox*, *TEI/XML Schema*, *Roadmap*, and *GitHub*.
 
-### 3. Rigveda Interactive Viewer (`/texts/rigveda/1/1`)
-- **[page.tsx](file:///c:/Users/sachi/Downloads/rigveda-mvp/app/texts/rigveda/[mandala]/[sukta]/page.tsx)**:
-  - Dynamically loads and parses the Rigveda dataset from [rv_1_1.json](file:///c:/Users/sachi/Downloads/rigveda-mvp/data/rv_1_1.json).
-  - **Reading Canvas (Left/Center)**: Displays the 9 mantras of Rigveda 1.1 in large accented Devanagari. Every single word is clickable.
-  - **Philological Inspector (Right Sidebar)**: Clicked words update this panel instantly with their un-sandhied Padapatha form, root lemma, grammatical breakdown pills, and literal meanings.
-  - **Commentary Accordion (Bottom)**: Houses tabs for Sāyaṇa's classical Sanskrit commentary (Bhāṣya), metadata (Deity, Rishi, Meter), and CC license information.
-  - **Mobile Drawer**: The split pane collapses into an overlay bottom sheet on mobile viewports for fluid mobile navigation.
+### 3. Veda Selection Wizard Portal (`/texts`)
+- **[page.tsx](file:///c:/Users/sachi/Downloads/rigveda-mvp/app/texts/page.tsx)**:
+  - Guided step-by-step wizard to dynamically browse all 4 Vedas.
+  - **Step 1**: Choose from the 4 Vedas (Rigveda, Yajurveda, Samaveda, Atharvaveda) with custom card layouts, descriptions, and translations of their names.
+  - **Step 2**: Choose from historical Shakhas (recensions) specific to that Veda.
+  - **Step 3**: Select the Mandala (Rigveda) or Kanda (Yajurveda/Atharvaveda) or Prapathaka (Samaveda).
+  - **Step 4**: Select the Sukta or Hymn.
+  - **Action**: Routes to the dynamic reader via the primary "Begin Exploration" button.
 
-### 4. DLIIH Scholar AI Chatbot
+### 4. Dynamic Veda Reader (`/texts/[veda]/[shakha]/[mandala]/[sukta]`)
+- **[page.tsx](file:///c:/Users/sachi/Downloads/rigveda-mvp/app/texts/[veda]/[shakha]/[mandala]/[sukta]/page.tsx)**:
+  - Automatically parses route parameters `veda`, `shakha`, `mandala`, and `sukta`.
+  - **Active Dataset (Rigveda Sakala 1.1)**: Dynamically loads and parses the Rigveda dataset from [rv_1_1.json](file:///c:/Users/sachi/Downloads/rigveda-mvp/data/rv_1_1.json). Features click-to-inspect word alignments, morphological breakdown sidebar, and Sāyaṇa's Sanskrit commentaries.
+  - **Roadmap Placeholder (Other Vedas/Shakhas)**: If users select sections that are not yet digitized, it renders a beautifully formatted placeholder detailing the DLIIH roadmap, with a quick-link button to jump back to the active Rigveda 1.1 dataset.
+  - **Mobile Drawer**: The split pane collapses into an overlay bottom sheet on mobile viewports.
+
+### 5. DLIIH Scholar AI Chatbot
 - **[Chatbot.tsx](file:///c:/Users/sachi/Downloads/rigveda-mvp/app/components/Chatbot.tsx)**: A floating interactive widget with auto-scroll and loading indicators, styled with the dark-stone theme.
 - **[route.ts](file:///c:/Users/sachi/Downloads/rigveda-mvp/app/api/chat/route.ts)**: A server-side API handler that returns rich context-aware explanations on terms like *Agni*, *Rishi*, *Gayatri*, *Sayana*, *Rta*, *Purohita*, and *Hotr*.
 
@@ -58,15 +66,17 @@ The build completed **successfully with zero warnings or errors**:
 ▲ Next.js 16.2.6 (Turbopack)
 
   Creating an optimized production build ...
-✓ Compiled successfully in 2.7s
+✓ Compiled successfully in 2.0s
   Running TypeScript ...
-  Finished TypeScript in 2.1s ...
-  Collecting page data using 6 workers ...
-  Generating static pages using 6 workers (4/4) in 535ms
+  Finished TypeScript in 2.2s ...
+  Collecting page data using 7 workers ...
+  Generating static pages using 7 workers (5/5) in 577ms
   Finalizing page optimization ...
+
 Route (app)
 ┌ ○ /
 ├ ○ /_not-found
 ├ ƒ /api/chat
-└ ƒ /texts/rigveda/[mandala]/[sukta]
+├ ○ /texts
+└ ƒ /texts/[veda]/[shakha]/[mandala]/[sukta]
 ```
