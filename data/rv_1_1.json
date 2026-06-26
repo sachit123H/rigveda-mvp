@@ -9,62 +9,14 @@
     "rishi": "Madhuchhandas Vaiśvāmitra",
     "samhitapatha": "अ॒ग्निमी॑ळे पु॒रोहि॑तं य॒ज्ञस्य॑ दे॒वमृत्विज॑म् । होता॑रं रत्न॒धात॑मम् ॥",
     "padapatha": [
-      {
-        "word_index": 1,
-        "pada": "अ॒ग्निम्",
-        "lemma": "अग्नि",
-        "grammar": "noun, masc, acc, sg",
-        "literal_meaning": "to Fire / the Divine Light"
-      },
-      {
-        "word_index": 2,
-        "pada": "ई॒ळे॒",
-        "lemma": "ईड्",
-        "grammar": "verb, present, middle, 1st pers, sg",
-        "literal_meaning": "I praise / I invoke"
-      },
-      {
-        "word_index": 3,
-        "pada": "पु॒रः्ऽहि॑तम्",
-        "lemma": "पुरोहित",
-        "grammar": "noun, masc, acc, sg (compound)",
-        "literal_meaning": "placed foremost / the high priest"
-      },
-      {
-        "word_index": 4,
-        "pada": "य॒ज्ञस्य॑",
-        "lemma": "यज्ञ",
-        "grammar": "noun, masc, gen, sg",
-        "literal_meaning": "of the sacrifice"
-      },
-      {
-        "word_index": 5,
-        "pada": "दे॒वम्",
-        "lemma": "देव",
-        "grammar": "noun, masc, acc, sg",
-        "literal_meaning": "the divine / the shining one"
-      },
-      {
-        "word_index": 6,
-        "pada": "ऋ॒त्विज॑म्",
-        "lemma": "ऋत्विज्",
-        "grammar": "noun, masc, acc, sg",
-        "literal_meaning": "the seasonal priest / minister"
-      },
-      {
-        "word_index": 7,
-        "pada": "होता॑रम्",
-        "lemma": "होतृ",
-        "grammar": "noun, masc, acc, sg",
-        "literal_meaning": "the invoker / summoner"
-      },
-      {
-        "word_index": 8,
-        "pada": "रत्न्ऽधा॑तमम्",
-        "lemma": "रत्नधातम",
-        "grammar": "adj, masc, acc, sg (superlative)",
-        "literal_meaning": "bestower of ultimate treasures"
-      }
+      { "word_index": 1, "pada": "अ॒ग्निम्", "lemma": "अग्नि", "grammar": "noun, masc, acc, sg", "literal_meaning": "to Fire / the Divine Light" },
+      { "word_index": 2, "pada": "ई॒ळे॒", "lemma": "ईड्", "grammar": "verb, present, middle, 1st pers, sg", "literal_meaning": "I praise / I invoke" },
+      { "word_index": 3, "pada": "पु॒रः्ऽहि॑तम्", "lemma": "पुरोहित", "grammar": "noun, masc, acc, sg (compound)", "literal_meaning": "placed foremost / the high priest" },
+      { "word_index": 4, "pada": "य॒ज्ञस्य॑", "lemma": "यज्ञ", "grammar": "noun, masc, gen, sg", "literal_meaning": "of the sacrifice" },
+      { "word_index": 5, "pada": "दे॒वम्", "lemma": "देव", "grammar": "noun, masc, acc, sg", "literal_meaning": "the divine / the shining one" },
+      { "word_index": 6, "pada": "ऋ॒त्विज॑म्", "lemma": "ऋत्विज्", "grammar": "noun, masc, acc, sg", "literal_meaning": "the seasonal priest / minister" },
+      { "word_index": 7, "pada": "होता॑रम्", "lemma": "होतृ", "grammar": "noun, masc, acc, sg", "literal_meaning": "the invoker / summoner" },
+      { "word_index": 8, "pada": "रत्न्ऽधा॑तमम्", "lemma": "रत्नधातम", "grammar": "adj, masc, acc, sg (superlative)", "literal_meaning": "bestower of ultimate treasures" }
     ],
     "translation": {
       "author": "Sachit Varshney",
@@ -103,6 +55,11 @@
       "author": "Sachit Varshney",
       "license": "CC-BY-SA-4.0",
       "fluid_text": "Agni, worthy of invocation by the ancient seers and by the new alike—may he bring the gods hither."
+    },
+    "commentary": {
+      "author": "Sāyaṇa",
+      "language": "sa",
+      "text": ""
     }
   },
   {
@@ -128,6 +85,11 @@
       "author": "Sachit Varshney",
       "license": "CC-BY-SA-4.0",
       "fluid_text": "Through Agni, one attains prosperity and nourishment that increases day by day, replete with glory and the highest heroic strength."
+    },
+    "commentary": {
+      "author": "Sāyaṇa",
+      "language": "sa",
+      "text": ""
     }
   },
   {
@@ -156,6 +118,11 @@
       "author": "Sachit Varshney",
       "license": "CC-BY-SA-4.0",
       "fluid_text": "O Agni, the flawless sacrifice that you encompass on all sides—that alone reaches the gods."
+    },
+    "commentary": {
+      "author": "Sāyaṇa",
+      "language": "sa",
+      "text": ""
     }
   },
   {
@@ -182,6 +149,11 @@
       "author": "Sachit Varshney",
       "license": "CC-BY-SA-4.0",
       "fluid_text": "May Agni, the invoker of seer-like will, true and most brilliantly famed, come hither—a god alongside the gods."
+    },
+    "commentary": {
+      "author": "Sāyaṇa",
+      "language": "sa",
+      "text": ""
     }
   },
   {
@@ -211,6 +183,11 @@
       "author": "Sachit Varshney",
       "license": "CC-BY-SA-4.0",
       "fluid_text": "Whatever good you shall bestow upon the offerer, O Agni, that truth is inherently yours, O Angiras."
+    },
+    "commentary": {
+      "author": "Sāyaṇa",
+      "language": "sa",
+      "text": ""
     }
   },
   {
@@ -239,6 +216,11 @@
       "author": "Sachit Varshney",
       "license": "CC-BY-SA-4.0",
       "fluid_text": "To you, O Agni, illuminator of the dusk, we approach day by day, bearing our homage through devotion."
+    },
+    "commentary": {
+      "author": "Sāyaṇa",
+      "language": "sa",
+      "text": ""
     }
   },
   {
@@ -264,6 +246,11 @@
       "author": "Sachit Varshney",
       "license": "CC-BY-SA-4.0",
       "fluid_text": "Ruling over the sacrifices, shining as the guardian of the Cosmic Order, growing ever greater in your own dwelling."
+    },
+    "commentary": {
+      "author": "Sāyaṇa",
+      "language": "sa",
+      "text": ""
     }
   },
   {
@@ -291,6 +278,11 @@
       "author": "Sachit Varshney",
       "license": "CC-BY-SA-4.0",
       "fluid_text": "Be easy of approach to us, O Agni, just as a father is to his son. Abide with us for our well-being."
+    },
+    "commentary": {
+      "author": "Sāyaṇa",
+      "language": "sa",
+      "text": ""
     }
   }
 ]
