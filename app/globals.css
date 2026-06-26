@@ -1,0 +1,68 @@
+@import "tailwindcss";
+
+:root {
+  --background-light: #fbfbf9; /* warm stone paper color */
+  --foreground-light: #1c1917; /* stone-900 */
+  --accent-light: #b45309; /* amber-700 */
+  --accent-light-hover: #92400e; /* amber-800 */
+  --border-light: #e7e5e4; /* stone-200 */
+  
+  --background-dark: #0c0a09; /* stone-950 */
+  --foreground-dark: #f5f5f4; /* stone-100 */
+  --accent-dark: #f59e0b; /* amber-500 */
+  --accent-dark-hover: #fbbf24; /* amber-400 */
+  --border-dark: #292524; /* stone-800 */
+}
+
+@theme inline {
+  --font-sans: var(--font-sans), system-ui, sans-serif;
+  --font-serif: var(--font-serif), Georgia, serif;
+  --font-deva: var(--font-deva), serif;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  overflow-x: hidden;
+}
+
+/* Custom scrollbar styling for a premium feel */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(120, 113, 108, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(120, 113, 108, 0.5);
+}
+
+/* Smooth active state pulsing */
+@keyframes goldPulse {
+  0%, 100% {
+    box-shadow: 0 0 4px rgba(245, 158, 11, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 12px rgba(245, 158, 11, 0.5);
+  }
+}
+
+.active-pulse {
+  animation: goldPulse 2s infinite ease-in-out;
+}
+
+/* Glassmorphism class helper */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
