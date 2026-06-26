@@ -36,6 +36,71 @@ interface MantraData {
   token_mapping?: Record<string, number[]>;
 }
 
+// ── Sāyaṇa Bhāṣya Panel ──────────────────────────────────────────────────────
+function SayanaPanel({ mantra }: { mantra: MantraData }) {
+  const [expanded, setExpanded] = useState(false);
+  const text = mantra.commentary?.text || "";
+  const THRESHOLD = 320; // chars before we collapse
+  const needsToggle = text.length > THRESHOLD;
+  const displayed = needsToggle && !expanded ? text.slice(0, THRESHOLD) + "…" : text;
+
+  return (
+    <div>
+      {/* Header row */}
+      <div className="flex items-center justify-between mb-5">
+        <div className="flex items-center gap-3">
+          <span className="text-amber-600 text-xl select-none" aria-hidden>॥</span>
+          <div>
+            <h4 className="text-[11px] font-bold text-stone-400 uppercase tracking-widest leading-none">
+              Sāyaṇabhāṣyam
+            </h4>
+            <p className="text-[10px] text-stone-400 mt-0.5">
+              Mantra {mantra.mandala}.{mantra.sukta}.{mantra.mantra}
+            </p>
+          </div>
+        </div>
+        <span className="text-[10px] font-semibold text-amber-800 bg-amber-50 border border-amber-100 px-2.5 py-1 rounded-full">
+          Sāyaṇācārya · 14th c.
+        </span>
+      </div>
+
+      {text ? (
+        <>
+          {/* Commentary body */}
+          <div className="bg-amber-50/40 border border-amber-100/70 rounded-xl p-5">
+            <p className="font-deva text-[1.15rem] leading-[2.1] text-stone-800 tracking-wide text-justify">
+              {displayed}
+            </p>
+          </div>
+
+          {needsToggle && (
+            <button
+              onClick={() => setExpanded((v) => !v)}
+              className="mt-3 text-xs font-semibold text-amber-700 hover:text-amber-900 underline underline-offset-2 transition-colors"
+            >
+              {expanded ? "Show less ▲" : "Read full bhāṣya ▼"}
+            </button>
+          )}
+
+          {/* Source note */}
+          <p className="mt-4 text-[10px] text-stone-400 italic">
+            Source: Sāyaṇa&apos;s Ṛgvedabhāṣya (सायणभाष्यम्). Traditional Sanskrit commentary transmitted through Vedic tradition.
+          </p>
+        </>
+      ) : (
+        <div className="py-8 px-4 text-center border-2 border-dashed border-stone-200 rounded-xl">
+          <span className="text-stone-300 text-3xl block mb-2">॰</span>
+          <p className="text-sm text-stone-400 italic">
+            No bhāṣya has been transcribed for Mantra {mantra.mantra} in this release.
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+
 export default function VedaViewer({
   params,
 }: {
@@ -266,25 +331,7 @@ export default function VedaViewer({
 
               <div className="p-6 md:p-8 min-h-[150px]">
                 {activeCommentaryTab === "sayana" && activeMantra && (
-                  <div>
-                    <div className="flex justify-between items-center mb-4">
-                      <h4 className="text-xs font-bold text-stone-400 uppercase tracking-widest">
-                        Classical Sanskrit Commentary (Mantra {activeMantra.mantra})
-                      </h4>
-                      <span className="text-[10px] font-semibold text-stone-500 bg-stone-100 px-2 py-0.5 rounded">
-                        Commentator: Sāyaṇācārya
-                      </span>
-                    </div>
-                    {activeMantra.commentary.text ? (
-                      <p className="font-deva text-xl leading-loose text-stone-800 tracking-wide text-justify">
-                        {activeMantra.commentary.text}
-                      </p>
-                    ) : (
-                      <p className="text-sm text-stone-400 italic">
-                        No commentary exists or has been transcribed for Mantra {activeMantra.mantra} in this release.
-                      </p>
-                    )}
-                  </div>
+                  <SayanaPanel mantra={activeMantra} />
                 )}
 
                 {activeCommentaryTab === "metadata" && activeMantra && (
