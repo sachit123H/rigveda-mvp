@@ -76,5 +76,221 @@
       "language": "sa",
       "text": "यज्ञस्य पुरोहितं देवम् ऋत्विजं होतारं रत्नधातमम् अग्निम् ईळे स्तौमि ।"
     }
+  },
+  {
+    "id": "RV_1.1.2",
+    "mandala": 1,
+    "sukta": 1,
+    "mantra": 2,
+    "meter": "Gāyatrī",
+    "deity": "Agni",
+    "rishi": "Madhuchhandas Vaiśvāmitra",
+    "samhitapatha": "अ॒ग्निः पूर्वे॑भि॒र्ऋषि॑भि॒रीड्यो॒ नूत॑नैरु॒त । स दे॒वाँ एह व॑क्षति ॥",
+    "padapatha": [
+      { "word_index": 1, "pada": "अ॒ग्निः", "lemma": "अग्नि", "grammar": "noun, masc, nom, sg", "literal_meaning": "Agni" },
+      { "word_index": 2, "pada": "पूर्वे॑भिः", "lemma": "पूर्व", "grammar": "adj, masc, inst, pl (Vedic)", "literal_meaning": "by the ancient" },
+      { "word_index": 3, "pada": "ऋषि॑ऽभिः", "lemma": "ऋषि", "grammar": "noun, masc, inst, pl", "literal_meaning": "by the seers" },
+      { "word_index": 4, "pada": "ईड्यः॑", "lemma": "ईड्", "grammar": "gerundive, masc, nom, sg", "literal_meaning": "worthy to be praised" },
+      { "word_index": 5, "pada": "नूत॑नैः", "lemma": "नूतन", "grammar": "adj, masc, inst, pl", "literal_meaning": "by the new" },
+      { "word_index": 6, "pada": "उ॒त", "lemma": "उत", "grammar": "conj", "literal_meaning": "and / also" },
+      { "word_index": 7, "pada": "सः", "lemma": "तद्", "grammar": "pron, masc, nom, sg", "literal_meaning": "he" },
+      { "word_index": 8, "pada": "दे॒वान्", "lemma": "देव", "grammar": "noun, masc, acc, pl", "literal_meaning": "the gods" },
+      { "word_index": 9, "pada": "आ", "lemma": "आ", "grammar": "prep / prefix", "literal_meaning": "hither" },
+      { "word_index": 10, "pada": "इ॒ह", "lemma": "इह", "grammar": "adv", "literal_meaning": "here" },
+      { "word_index": 11, "pada": "व॒क्ष॒ति॒", "lemma": "वह्", "grammar": "verb, aorist subj, active, 3rd pers, sg", "literal_meaning": "may he bring" }
+    ],
+    "translation": {
+      "author": "Sachit Varshney",
+      "license": "CC-BY-SA-4.0",
+      "fluid_text": "Agni, worthy of invocation by the ancient seers and by the new alike—may he bring the gods hither."
+    }
+  },
+  {
+    "id": "RV_1.1.3",
+    "mandala": 1,
+    "sukta": 1,
+    "mantra": 3,
+    "meter": "Gāyatrī",
+    "deity": "Agni",
+    "rishi": "Madhuchhandas Vaiśvāmitra",
+    "samhitapatha": "अ॒ग्निना॑ र॒यिम॑श्नव॒त्पोष॑मे॒व दि॒वेदि॑वे । य॒शसं॑ वी॒रव॑त्तमम् ॥",
+    "padapatha": [
+      { "word_index": 1, "pada": "अ॒ग्निना॑", "lemma": "अग्नि", "grammar": "noun, masc, inst, sg", "literal_meaning": "through Agni" },
+      { "word_index": 2, "pada": "र॒यिम्", "lemma": "रयि", "grammar": "noun, masc, acc, sg", "literal_meaning": "wealth / prosperity" },
+      { "word_index": 3, "pada": "अ॒श्न॒व॒त्", "lemma": "अश्", "grammar": "verb, present subj, active, 3rd pers, sg", "literal_meaning": "one may attain" },
+      { "word_index": 4, "pada": "पोष॑म्", "lemma": "पोष", "grammar": "noun, masc, acc, sg", "literal_meaning": "nourishment / increase" },
+      { "word_index": 5, "pada": "ए॒व", "lemma": "एव", "grammar": "particle", "literal_meaning": "indeed" },
+      { "word_index": 6, "pada": "दि॒वेऽदि॑वे", "lemma": "दिवेदिवे", "grammar": "adv (iterative)", "literal_meaning": "day by day" },
+      { "word_index": 7, "pada": "य॒शस॑म्", "lemma": "यशस्", "grammar": "adj, masc, acc, sg", "literal_meaning": "glorious" },
+      { "word_index": 8, "pada": "वी॒रव॑त्ऽतमम्", "lemma": "वीरवत्तम", "grammar": "adj, masc, acc, sg (superlative)", "literal_meaning": "most abounding in heroes" }
+    ],
+    "translation": {
+      "author": "Sachit Varshney",
+      "license": "CC-BY-SA-4.0",
+      "fluid_text": "Through Agni, one attains prosperity and nourishment that increases day by day, replete with glory and the highest heroic strength."
+    }
+  },
+  {
+    "id": "RV_1.1.4",
+    "mandala": 1,
+    "sukta": 1,
+    "mantra": 4,
+    "meter": "Gāyatrī",
+    "deity": "Agni",
+    "rishi": "Madhuchhandas Vaiśvāmitra",
+    "samhitapatha": "अग्ने॒ यं य॒ज्ञम॑ध्व॒रं वि॒श्वतः॑ परि॒भूरसि॑ । स इद्दे॒वेषु॑ गच्छति ॥",
+    "padapatha": [
+      { "word_index": 1, "pada": "अग्ने॑", "lemma": "अग्नि", "grammar": "noun, masc, voc, sg", "literal_meaning": "O Agni" },
+      { "word_index": 2, "pada": "यम्", "lemma": "यद्", "grammar": "pron, masc, acc, sg", "literal_meaning": "which" },
+      { "word_index": 3, "pada": "य॒ज्ञम्", "lemma": "यज्ञ", "grammar": "noun, masc, acc, sg", "literal_meaning": "sacrifice" },
+      { "word_index": 4, "pada": "अ॒ध्व॒रम्", "lemma": "अध्वर", "grammar": "adj/noun, masc, acc, sg", "literal_meaning": "uninterrupted / flawless rite" },
+      { "word_index": 5, "pada": "वि॒श्वतः॑", "lemma": "विश्वतस्", "grammar": "adv", "literal_meaning": "from all sides" },
+      { "word_index": 6, "pada": "प॒रि॒ऽभूः", "lemma": "परिभू", "grammar": "adj, masc, nom, sg", "literal_meaning": "encompassing / embracing" },
+      { "word_index": 7, "pada": "असि॑", "lemma": "अस्", "grammar": "verb, present, active, 2nd pers, sg", "literal_meaning": "you are" },
+      { "word_index": 8, "pada": "सः", "lemma": "तद्", "grammar": "pron, masc, nom, sg", "literal_meaning": "that" },
+      { "word_index": 9, "pada": "इत्", "lemma": "इत्", "grammar": "particle", "literal_meaning": "alone / indeed" },
+      { "word_index": 10, "pada": "दे॒वेषु॑", "lemma": "देव", "grammar": "noun, masc, loc, pl", "literal_meaning": "among the gods" },
+      { "word_index": 11, "pada": "ग॒च्छ॒ति॒", "lemma": "गम्", "grammar": "verb, present, active, 3rd pers, sg", "literal_meaning": "it goes" }
+    ],
+    "translation": {
+      "author": "Sachit Varshney",
+      "license": "CC-BY-SA-4.0",
+      "fluid_text": "O Agni, the flawless sacrifice that you encompass on all sides—that alone reaches the gods."
+    }
+  },
+  {
+    "id": "RV_1.1.5",
+    "mandala": 1,
+    "sukta": 1,
+    "mantra": 5,
+    "meter": "Gāyatrī",
+    "deity": "Agni",
+    "rishi": "Madhuchhandas Vaiśvāmitra",
+    "samhitapatha": "अ॒ग्निर्होता॑ क॒विक्र॑तुः स॒त्यश्चि॒त्रश्र॑वस्तमः । दे॒वो दे॒वेभि॒रा ग॑मत् ॥",
+    "padapatha": [
+      { "word_index": 1, "pada": "अ॒ग्निः", "lemma": "अग्नि", "grammar": "noun, masc, nom, sg", "literal_meaning": "Agni" },
+      { "word_index": 2, "pada": "होता॑", "lemma": "होतृ", "grammar": "noun, masc, nom, sg", "literal_meaning": "the invoker" },
+      { "word_index": 3, "pada": "क॒विऽक्र॑तुः", "lemma": "कविक्रतु", "grammar": "adj, masc, nom, sg", "literal_meaning": "of seer-like will / possessed of poetic wisdom" },
+      { "word_index": 4, "pada": "स॒त्यः", "lemma": "सत्य", "grammar": "adj, masc, nom, sg", "literal_meaning": "true / real" },
+      { "word_index": 5, "pada": "चि॒त्रश्र॑वःऽतमः", "lemma": "चित्रश्रवस्तम", "grammar": "adj, masc, nom, sg (superlative)", "literal_meaning": "most brilliant in fame" },
+      { "word_index": 6, "pada": "दे॒वः", "lemma": "देव", "grammar": "noun, masc, nom, sg", "literal_meaning": "the god" },
+      { "word_index": 7, "pada": "दे॒वेभिः॑", "lemma": "देव", "grammar": "noun, masc, inst, pl", "literal_meaning": "with the gods" },
+      { "word_index": 8, "pada": "आ", "lemma": "आ", "grammar": "prep", "literal_meaning": "hither" },
+      { "word_index": 9, "pada": "ग॒म॒त्", "lemma": "गम्", "grammar": "verb, aorist inj, active, 3rd pers, sg", "literal_meaning": "may he come" }
+    ],
+    "translation": {
+      "author": "Sachit Varshney",
+      "license": "CC-BY-SA-4.0",
+      "fluid_text": "May Agni, the invoker of seer-like will, true and most brilliantly famed, come hither—a god alongside the gods."
+    }
+  },
+  {
+    "id": "RV_1.1.6",
+    "mandala": 1,
+    "sukta": 1,
+    "mantra": 6,
+    "meter": "Gāyatrī",
+    "deity": "Agni",
+    "rishi": "Madhuchhandas Vaiśvāmitra",
+    "samhitapatha": "यद॒ङ्ग दा॒शुषे॒ त्वमग्ने॑ भ॒द्रं क॑रि॒ष्यसि॑ । तवेत्तत्स॒त्यम॑ङ्गिरः ॥",
+    "padapatha": [
+      { "word_index": 1, "pada": "यत्", "lemma": "यद्", "grammar": "pron, neut, acc, sg", "literal_meaning": "whatever" },
+      { "word_index": 2, "pada": "अ॒ङ्ग", "lemma": "अङ्ग", "grammar": "particle", "literal_meaning": "indeed / O" },
+      { "word_index": 3, "pada": "दा॒शुषे॑", "lemma": "दाश्वस्", "grammar": "participle noun, masc, dat, sg", "literal_meaning": "to the giver / offerer" },
+      { "word_index": 4, "pada": "त्वम्", "lemma": "युष्मद्", "grammar": "pron, nom, sg", "literal_meaning": "you" },
+      { "word_index": 5, "pada": "अग्ने॑", "lemma": "अग्नि", "grammar": "noun, masc, voc, sg", "literal_meaning": "O Agni" },
+      { "word_index": 6, "pada": "भ॒द्रम्", "lemma": "भद्र", "grammar": "adj/noun, neut, acc, sg", "literal_meaning": "good / auspicious" },
+      { "word_index": 7, "pada": "क॒रि॒ष्यसि॑", "lemma": "कृ", "grammar": "verb, future, active, 2nd pers, sg", "literal_meaning": "you will do" },
+      { "word_index": 8, "pada": "तव॑", "lemma": "युष्मद्", "grammar": "pron, gen, sg", "literal_meaning": "yours" },
+      { "word_index": 9, "pada": "इत्", "lemma": "इत्", "grammar": "particle", "literal_meaning": "indeed" },
+      { "word_index": 10, "pada": "तत्", "lemma": "तद्", "grammar": "pron, neut, nom, sg", "literal_meaning": "that" },
+      { "word_index": 11, "pada": "स॒त्यम्", "lemma": "सत्य", "grammar": "adj, neut, nom, sg", "literal_meaning": "truth" },
+      { "word_index": 12, "pada": "अ॒ङ्गि॒रः॒", "lemma": "अङ्गिरस्", "grammar": "noun, masc, voc, sg", "literal_meaning": "O Angiras" }
+    ],
+    "translation": {
+      "author": "Sachit Varshney",
+      "license": "CC-BY-SA-4.0",
+      "fluid_text": "Whatever good you shall bestow upon the offerer, O Agni, that truth is inherently yours, O Angiras."
+    }
+  },
+  {
+    "id": "RV_1.1.7",
+    "mandala": 1,
+    "sukta": 1,
+    "mantra": 7,
+    "meter": "Gāyatrī",
+    "deity": "Agni",
+    "rishi": "Madhuchhandas Vaiśvāmitra",
+    "samhitapatha": "उप॑ त्वाग्ने दि॒वेदि॑वे॒ दोषा॑वस्तर्धि॒या व॒यम् । नमो॒ भर॑न्त॒ एम॑सि ॥",
+    "padapatha": [
+      { "word_index": 1, "pada": "उप॑", "lemma": "उप", "grammar": "prep", "literal_meaning": "near / towards" },
+      { "word_index": 2, "pada": "त्वा॒", "lemma": "युष्मद्", "grammar": "pron, acc, sg", "literal_meaning": "you" },
+      { "word_index": 3, "pada": "अ॒ग्ने॒", "lemma": "अग्नि", "grammar": "noun, masc, voc, sg", "literal_meaning": "O Agni" },
+      { "word_index": 4, "pada": "दि॒वेऽदि॑वे", "lemma": "दिवेदिवे", "grammar": "adv", "literal_meaning": "day by day" },
+      { "word_index": 5, "pada": "दोषा॑ऽवस्तः", "lemma": "दोषावस्तर्", "grammar": "noun, masc, voc, sg", "literal_meaning": "O illuminator of the darkness" },
+      { "word_index": 6, "pada": "धि॒या", "lemma": "धी", "grammar": "noun, fem, inst, sg", "literal_meaning": "with thought / devotion" },
+      { "word_index": 7, "pada": "व॒यम्", "lemma": "अस्मद्", "grammar": "pron, nom, pl", "literal_meaning": "we" },
+      { "word_index": 8, "pada": "नमः॑", "lemma": "नमस्", "grammar": "noun, neut, acc, sg", "literal_meaning": "reverence / homage" },
+      { "word_index": 9, "pada": "भर॑न्तः", "lemma": "भृ", "grammar": "participle, active, nom, pl", "literal_meaning": "bearing" },
+      { "word_index": 10, "pada": "आ", "lemma": "आ", "grammar": "prep", "literal_meaning": "hither" },
+      { "word_index": 11, "pada": "इ॒म॒सि॒", "lemma": "इ", "grammar": "verb, present, active, 1st pers, pl", "literal_meaning": "we approach" }
+    ],
+    "translation": {
+      "author": "Sachit Varshney",
+      "license": "CC-BY-SA-4.0",
+      "fluid_text": "To you, O Agni, illuminator of the dusk, we approach day by day, bearing our homage through devotion."
+    }
+  },
+  {
+    "id": "RV_1.1.8",
+    "mandala": 1,
+    "sukta": 1,
+    "mantra": 8,
+    "meter": "Gāyatrī",
+    "deity": "Agni",
+    "rishi": "Madhuchhandas Vaiśvāmitra",
+    "samhitapatha": "राज॑न्तमध्व॒राणां॑ गो॒पामृ॒तस्य॒ दीदि॑विम् । वर्ध॑मानं॒ स्वे दमे॑ ॥",
+    "padapatha": [
+      { "word_index": 1, "pada": "राज॑न्तम्", "lemma": "राज्", "grammar": "participle, active, acc, sg", "literal_meaning": "ruling over / illuminating" },
+      { "word_index": 2, "pada": "अ॒ध्व॒राणा॑म्", "lemma": "अध्वर", "grammar": "noun, masc, gen, pl", "literal_meaning": "the sacrifices" },
+      { "word_index": 3, "pada": "गो॒पाम्", "lemma": "गोपा", "grammar": "noun, masc, acc, sg", "literal_meaning": "the protector / guardian" },
+      { "word_index": 4, "pada": "ऋ॒तस्य॑", "lemma": "ऋत", "grammar": "noun, neut, gen, sg", "literal_meaning": "of the cosmic order (Rta)" },
+      { "word_index": 5, "pada": "दीदि॑विम्", "lemma": "दीदिवि", "grammar": "adj, masc, acc, sg", "literal_meaning": "shining / brilliant" },
+      { "word_index": 6, "pada": "वर्ध॑मानम्", "lemma": "वृध्", "grammar": "participle, middle, acc, sg", "literal_meaning": "growing" },
+      { "word_index": 7, "pada": "स्वे", "lemma": "स्व", "grammar": "pron adj, loc, sg", "literal_meaning": "in your own" },
+      { "word_index": 8, "pada": "दमे॑", "lemma": "दम", "grammar": "noun, loc, sg", "literal_meaning": "home / dwelling" }
+    ],
+    "translation": {
+      "author": "Sachit Varshney",
+      "license": "CC-BY-SA-4.0",
+      "fluid_text": "Ruling over the sacrifices, shining as the guardian of the Cosmic Order, growing ever greater in your own dwelling."
+    }
+  },
+  {
+    "id": "RV_1.1.9",
+    "mandala": 1,
+    "sukta": 1,
+    "mantra": 9,
+    "meter": "Gāyatrī",
+    "deity": "Agni",
+    "rishi": "Madhuchhandas Vaiśvāmitra",
+    "samhitapatha": "स नः॑ पि॒तेव॑ सू॒नवेऽग्ने॑ सूपाय॒नो भ॑व । सच॑स्वा नः स्व॒स्तये॑ ॥",
+    "padapatha": [
+      { "word_index": 1, "pada": "सः", "lemma": "तद्", "grammar": "pron, masc, nom, sg", "literal_meaning": "he / you" },
+      { "word_index": 2, "pada": "नः॒", "lemma": "अस्मद्", "grammar": "pron, dat, pl", "literal_meaning": "to us" },
+      { "word_index": 3, "pada": "पि॒ताऽइ॑व", "lemma": "पितृ-इव", "grammar": "noun + particle", "literal_meaning": "like a father" },
+      { "word_index": 4, "pada": "सू॒नवे॑", "lemma": "सूनु", "grammar": "noun, masc, dat, sg", "literal_meaning": "to a son" },
+      { "word_index": 5, "pada": "अग्ने॑", "lemma": "अग्नि", "grammar": "noun, masc, voc, sg", "literal_meaning": "O Agni" },
+      { "word_index": 6, "pada": "सु॒ऽउ॒पा॒य॒नः", "lemma": "सूपायन", "grammar": "adj, masc, nom, sg", "literal_meaning": "easy of approach" },
+      { "word_index": 7, "pada": "भ॒व॒", "lemma": "भू", "grammar": "verb, imperative, active, 2nd pers, sg", "literal_meaning": "be" },
+      { "word_index": 8, "pada": "सच॑स्व", "lemma": "सच्", "grammar": "verb, imperative, middle, 2nd pers, sg", "literal_meaning": "stay with / accompany" },
+      { "word_index": 9, "pada": "नः॒", "lemma": "अस्मद्", "grammar": "pron, dat, pl", "literal_meaning": "us" },
+      { "word_index": 10, "pada": "स्व॒स्तये॑", "lemma": "स्वस्ति", "grammar": "noun, fem, dat, sg", "literal_meaning": "for well-being" }
+    ],
+    "translation": {
+      "author": "Sachit Varshney",
+      "license": "CC-BY-SA-4.0",
+      "fluid_text": "Be easy of approach to us, O Agni, just as a father is to his son. Abide with us for our well-being."
+    }
   }
 ]
