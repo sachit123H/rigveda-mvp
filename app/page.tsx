@@ -138,7 +138,7 @@ export default function Home() {
           <Link href="/" className="text-stone-600 hover:text-amber-700 transition-colors">
             Home
           </Link>
-          <Link href="/texts/rigveda/1/1" className="text-amber-700 hover:text-amber-800 transition-colors">
+          <Link href="/texts" className="text-amber-700 hover:text-amber-800 transition-colors">
             Corpus Viewer
           </Link>
           <a href="#sandbox" className="text-stone-600 hover:text-amber-700 transition-colors">
@@ -224,10 +224,10 @@ export default function Home() {
               </p>
             </div>
             <Link
-              href="/texts/rigveda/1/1"
+              href="/texts"
               className="w-full md:w-auto px-8 py-4 bg-stone-900 hover:bg-amber-600 text-amber-50 hover:text-white font-medium rounded-xl shadow-md transition-all duration-300 hover:shadow-lg text-center tracking-wide text-sm uppercase"
             >
-              Open Rigveda 1.1
+              Open Veda Portal
             </Link>
           </div>
         </section>
@@ -441,7 +441,7 @@ export default function Home() {
             <p className="text-stone-400 text-xs mt-1">Digital Library of Indic Intellectual History</p>
           </div>
           <div className="flex gap-6 text-xs text-stone-400 font-medium tracking-wide">
-            <Link href="/texts/rigveda/1/1" className="hover:text-amber-700 transition-colors">Corpus Viewer</Link>
+            <Link href="/texts" className="hover:text-amber-700 transition-colors">Corpus Viewer</Link>
             <span>•</span>
             <a href="https://github.com/sachit123H/rigveda-mvp" target="_blank" rel="noopener noreferrer" className="hover:text-amber-700 transition-colors">GitHub Repository</a>
           </div>
