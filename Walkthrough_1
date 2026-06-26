@@ -15,26 +15,29 @@ We generated a custom Vedic-themed painting to serve as the hero graphic for the
 ## 🛠️ Implemented Components
 
 ### 1. Root Configurations & Layout
-- **[package.json](file:///c:/Users/sachi/Downloads/rigveda-mvp/package.json)**: Configured with Next.js 16.2.6, React 19.2.4, Tailwind CSS v4, and dev dependencies.
-- **[tsconfig.json](file:///c:/Users/sachi/Downloads/rigveda-mvp/tsconfig.json)**: Configured TypeScript compilation targets and path mapping (`@/*` to `./*`).
+- **[package.json](file:///c:/Users/sachi/Downloads/rigveda-mvp/package.json)**: Configured with Next.js 16.2.6, React 19.2.4, Tailwind CSS v4, named `vedicdharma-engine@0.1.0`.
+- **[tsconfig.json](file:///c:/Users/sachi/Downloads/rigveda-mvp/tsconfig.json)**: Configured TypeScript compilation targets and path mapping.
 - **[layout.tsx](file:///c:/Users/sachi/Downloads/rigveda-mvp/app/layout.tsx)**: Added Google Fonts mapping for optimal typography:
   - `Inter` (sans-serif) for system utilities and control elements.
   - `Crimson Pro` (serif) for the English translations and literary text.
   - `Noto Sans Devanagari` (Sanskrit) to ensure perfect rendering of Vedic svaras (accents).
+  - Configured `suppressHydrationWarning` on `html` and `body` elements to suppress extension class injection warning mismatches (such as ClickUp classes).
 - **[globals.css](file:///c:/Users/sachi/Downloads/rigveda-mvp/app/globals.css)**: Implemented styling variables for warm light paper and dark stone themes, premium custom scrollbars, and golden accent highlight glows.
 
-### 2. Main Landing Page (`/`)
-- **[page.tsx](file:///c:/Users/sachi/Downloads/rigveda-mvp/app/page.tsx)**:
-  - Rendered a header bar with DLIIH branding.
-  - Displays our custom **Vedic Yajna Hero** banner with detailed metadata.
-  - Provides a spotlight card on the **Rigveda Samhita (Phase 1 Deep Vertical Slice)** linking directly to the viewer.
-  - Incorporates an interactive chronological vertical timeline detailing the 5-year project roadmap.
+### 2. Main Landing Page (`/`) with UI/UX Feedback Reforms
+- **[page.tsx](file:///c:/Users/sachi/Downloads/rigveda-mvp/app/page.tsx)**: Converted into an interactive client component containing:
+  - **Refined Hero Hierarchy**: Swapped image caption text with a tight, direct value proposition: *"A rigorous, open-source digital corpus mapping the evolution of ancient Indic philosophy."*
+  - **Sanskrit Shloka Highlight**: Centered Mantra 1.1.1, increasing the font size and wrapping it in an elegant, golden-bordered blockquote block.
+  - **Live Demo Sandbox ("Show, Don't Tell")**: Created an interactive sandbox section. Users can click individual words in Mantra 1.1.1 to see the un-sandhied Padapatha form, root lemma, grammatical traits, and literal meanings appear in real-time.
+  - **Scannable Paradigm Comparison**: Restructured the text detailing the *Layered Disclosure Model* into a side-by-side card grid highlighting *The Traditional Overhead* (clutter, footnotes, sandhi blocks) vs *The DLIIH Solution* (clean canvas, tactile exploration, on-demand data).
+  - **TEI/XML Syntax Display**: Added a dedicated technical section demonstrating academic rigor. Features a tabbed code block toggling between raw **TEI/XML Source** and formatted **JSON Payload**.
+  - **Expanded Global Navigation**: Refined the sticky header with clean links: *Home*, *Corpus Viewer*, *Interactive Sandbox*, *TEI/XML Schema*, *Roadmap*, and *GitHub*.
 
 ### 3. Rigveda Interactive Viewer (`/texts/rigveda/1/1`)
 - **[page.tsx](file:///c:/Users/sachi/Downloads/rigveda-mvp/app/texts/rigveda/[mandala]/[sukta]/page.tsx)**:
   - Dynamically loads and parses the Rigveda dataset from [rv_1_1.json](file:///c:/Users/sachi/Downloads/rigveda-mvp/data/rv_1_1.json).
   - **Reading Canvas (Left/Center)**: Displays the 9 mantras of Rigveda 1.1 in large accented Devanagari. Every single word is clickable.
-  - **Philological Inspector (Right Sidebar)**: Clicked words update this panel instantly with their un-sandhied Padapatha form, root lemma, grammatical breakdown pills (case, number, gender), and literal meanings.
+  - **Philological Inspector (Right Sidebar)**: Clicked words update this panel instantly with their un-sandhied Padapatha form, root lemma, grammatical breakdown pills, and literal meanings.
   - **Commentary Accordion (Bottom)**: Houses tabs for Sāyaṇa's classical Sanskrit commentary (Bhāṣya), metadata (Deity, Rishi, Meter), and CC license information.
   - **Mobile Drawer**: The split pane collapses into an overlay bottom sheet on mobile viewports for fluid mobile navigation.
 
@@ -55,11 +58,11 @@ The build completed **successfully with zero warnings or errors**:
 ▲ Next.js 16.2.6 (Turbopack)
 
   Creating an optimized production build ...
-✓ Compiled successfully in 6.2s
+✓ Compiled successfully in 2.7s
   Running TypeScript ...
   Finished TypeScript in 2.1s ...
   Collecting page data using 6 workers ...
-  Generating static pages using 6 workers (4/4) in 585ms
+  Generating static pages using 6 workers (4/4) in 535ms
   Finalizing page optimization ...
 Route (app)
 ┌ ○ /
