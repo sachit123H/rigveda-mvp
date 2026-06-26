@@ -33,6 +33,7 @@ interface MantraData {
     language: string;
     text: string;
   };
+  token_mapping?: Record<string, number[]>;
 }
 
 export default function VedaViewer({
@@ -61,10 +62,13 @@ export default function VedaViewer({
     veda === "rigveda" &&
     shakha === "sakala" &&
     mandala === 1 &&
-    sukta === 1;
+    sukta >= 1 &&
+    sukta <= 20;
 
   // Load mantras if dataset is active
-  const mantras = hasActiveDataset ? (rvData as MantraData[]) : [];
+  const mantras = hasActiveDataset
+    ? (rvData as MantraData[]).filter((m) => m.mandala === mandala && m.sukta === sukta)
+    : [];
   const activeMantra = mantras[activeMantraIndex] || mantras[0];
 
   // Helper to split Samhitapatha into tokens
@@ -72,8 +76,11 @@ export default function VedaViewer({
     return samhitapatha.split(/\s+/).filter(Boolean);
   };
 
-  // Helper to get Padapatha elements for a clicked Samhitapatha token (Mantra 1.1.1 to 1.1.9)
-  const getPadasForToken = (mantraIdx: number, tokenIdx: number): number[] => {
+  // Helper to get Padapatha elements for a clicked Samhitapatha token (Mantra 1.1.1 to 1.20.N)
+  const getPadasForToken = (mantraIdx: number, tokenIdx: number, mantra: MantraData): number[] => {
+    if (mantra?.token_mapping) {
+      return mantra.token_mapping[tokenIdx.toString()] || [];
+    }
     const mapping: Record<number, Record<number, number[]>> = {
       0: { 0: [1, 2], 1: [3], 2: [4], 3: [5, 6], 5: [7], 6: [8] }, // Mantra 1
       1: { 0: [1], 1: [2, 3, 4], 2: [5, 6], 4: [7], 5: [8], 6: [9, 10], 7: [11] }, // Mantra 2
@@ -100,7 +107,7 @@ export default function VedaViewer({
     setActiveMantraIndex(mantraIdx);
     setSelectedTokenIndex({ mantraIndex: mantraIdx, tokenIndex: tokenIdx });
 
-    const padaIndices = getPadasForToken(mantraIdx, tokenIdx);
+    const padaIndices = getPadasForToken(mantraIdx, tokenIdx, mantra);
     const words = mantra.padapatha.filter((w) =>
       padaIndices.includes(w.word_index)
     );
