@@ -1,0 +1,233 @@
+// prisma/schema.prisma
+//
+// DLIIH — Digital Library of Indic Intellectual History
+// Production-ready relational schema for the Vedic Samhitas Scale Engine (Phase 1)
+//
+// Target: PostgreSQL (production)
+// For local dev without a hosted Postgres, switch the provider to "sqlite"
+// and set DATABASE_URL="file:./dev.db" in .env
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  // Switch to "sqlite" and DATABASE_URL="file:./dev.db" for local dev
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ── Enumerations ─────────────────────────────────────────────────────────────
+
+/// The textual layer type for a mantra. A single mantra may have many layers
+/// of different types (samhita text, pada breakdown, IAST, translations, etc.)
+enum LayerType {
+  SAMHITAPATHA  // Sandhi-combined continuous recitation text (with accents)
+  PADAPATHA     // Word-split analysis text (with accents + avagraha markers)
+  IAST          // ISO 15919 Roman transliteration (accent diacritics retained)
+  TRANSLATION   // Vernacular translation (English, German, Hindi, etc.)
+  COMMENTARY    // Scholastic commentary (Sāyaṇa, Mādhava, Wilson, etc.)
+}
+
+/// Script encoding of the text content
+enum ScriptType {
+  DEVANAGARI
+  IAST
+  LATIN
+  GRANTHA
+}
+
+/// Recension / Shakha identifier for the Veda
+enum ShakhaId {
+  SAKALA       // Rigveda Śākala recension (primary)
+  BASKALA      // Rigveda Bāṣkala recension
+  TAITTIRIYA   // Kṛṣṇa Yajurveda Taittirīya
+  KANVA        // Śukla Yajurveda Kāṇva
+  MADHYANDINA  // Śukla Yajurveda Mādhyandina
+  KAUTHUMA     // Sāmaveda Kauthuma
+  JAIMINIYA    // Sāmaveda Jaiminīya
+  SAUNAKA      // Atharvaveda Śaunaka
+  PAIPPALADA   // Atharvaveda Paippalāda
+}
+
+// ── Core Tables ───────────────────────────────────────────────────────────────
+
+/// texts — Macro-level textual unit (a Veda + Shakha + Mandala block)
+///
+/// Represents the top-level structural container: e.g. "Rigveda · Śākala · Mandala 1"
+/// One `texts` record covers the entirety of a Mandala, Kāṇḍa, or Prapāṭhaka.
+model Text {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  /// Normalised lowercase veda identifier: "rigveda" | "yajurveda" | "samaveda" | "atharvaveda"
+  veda        String
+  /// Recension identifier enum
+  shakha      ShakhaId
+  /// Primary structural division number (Mandala, Kāṇḍa, Prapāṭhaka)
+  division    Int
+
+  /// Total number of suktas / anuvākas in this division
+  numSuktas   Int      @default(0)
+
+  /// Suktas contained within this Text unit
+  suktas      Sukta[]
+
+  @@unique([veda, shakha, division])
+  @@index([veda, shakha])
+  @@map("texts")
+}
+
+/// suktas — Hymn-level metadata unit
+///
+/// A Sukta is identified by its ordinal within a Mandala (e.g. Sukta 1 of Mandala 1).
+/// Metadata fields (rishi, deity, meter) may vary per mantra within a sukta;
+/// these fields record the *primary* / most common value for the hymn as a whole.
+model Sukta {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  textId      String
+  text        Text     @relation(fields: [textId], references: [id], onDelete: Cascade)
+
+  /// 1-based sukta number within the parent mandala
+  suktaNum    Int
+
+  /// Primary rishi (seer) for the hymn — IAST romanisation
+  rishi       String   @default("")
+  /// Primary deity invoked — IAST romanisation
+  deityPrimary String  @default("")
+  /// Primary chandas (meter) — IAST romanisation
+  meterPrimary String  @default("")
+
+  /// Number of mantras in this sukta
+  numMantras  Int      @default(0)
+
+  mantras     Mantra[]
+
+  @@unique([textId, suktaNum])
+  @@index([textId])
+  @@map("suktas")
+}
+
+/// mantras — Verse-level stable entity with a canonical stable_id
+///
+/// The stable_id (e.g. "RV_1.1.1") is the persistent, citable identifier for
+/// a mantra across all editions, translations, and commentary corpora.
+/// It must never change once assigned.
+model Mantra {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  suktaId     String
+  sukta       Sukta    @relation(fields: [suktaId], references: [id], onDelete: Cascade)
+
+  /// Canonical stable citation identifier — e.g. "RV_1.1.1"
+  stableId    String   @unique
+
+  /// 1-based mantra number within the sukta
+  mantraNum   Int
+
+  /// Mantra-level metadata (may differ from sukta-level for suktas with mixed deities)
+  deity       String   @default("")
+  rishi       String   @default("")
+  meter       String   @default("")
+
+  /// Text layers: Samhitapātha, Padapātha, IAST, translations, commentaries
+  layers      MantraLayer[]
+  /// Per-word morphological token records
+  padaTokens  PadaToken[]
+
+  @@unique([suktaId, mantraNum])
+  @@index([suktaId])
+  @@map("mantras")
+}
+
+/// mantra_layers — One-to-many text layers bound to a single mantra
+///
+/// This table is the core of the multi-layer architecture. A single mantra
+/// (e.g. RV 1.1.1) can have:
+///   - A SAMHITAPATHA layer (Devanāgarī with pitch accents)
+///   - A PADAPATHA layer (word-split with avagraha notation, accents preserved)
+///   - An IAST layer (ISO 15919 romanisation with accent diacritics)
+///   - Multiple TRANSLATION layers (Griffith/English, Geldner/German, etc.)
+///   - Multiple COMMENTARY layers (Sāyaṇa/Sanskrit, Wilson/English, etc.)
+///
+/// CRITICAL: Vedic pitch accent marks (U+0951 udātta ॑, U+0952 anudātta ॒,
+/// U+1CD0–U+1CFF Vedic Extensions) must be preserved verbatim in `content`.
+/// Any processing pipeline must validate accent retention before writing here.
+model MantraLayer {
+  id          String     @id @default(cuid())
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  mantraId    String
+  mantra      Mantra     @relation(fields: [mantraId], references: [id], onDelete: Cascade)
+
+  /// The type of textual layer
+  layerType   LayerType
+
+  /// ISO 639-1 language code: "sa" (Sanskrit), "en", "de", "hi", etc.
+  language    String     @default("sa")
+
+  /// Script encoding of content
+  script      ScriptType @default(DEVANAGARI)
+
+  /// The actual text content. For SAMHITAPATHA and PADAPATHA layers in
+  /// Devanāgarī, pitch accent Unicode codepoints MUST be preserved verbatim.
+  content     String
+
+  /// Attribution: translator, commentator, or editor name
+  author      String?
+
+  /// SPDX licence expression: "CC-BY-SA-4.0", "Public Domain", etc.
+  license     String?
+
+  /// Bibliographic source reference (edition, publisher, year)
+  sourceRef   String?
+
+  @@index([mantraId, layerType])
+  @@index([mantraId, language])
+  @@map("mantra_layers")
+}
+
+/// pada_tokens — Per-word morphological records for a mantra's Padapātha
+///
+/// Each record corresponds to one Padapātha word (pada) in the split analysis.
+/// The `tokenMapping` JSON field maps Samhitapātha token indices (0-based) to
+/// the array of word_index values they cover — enabling the interactive
+/// click-to-highlight behaviour in the HCI layer.
+model PadaToken {
+  id            String   @id @default(cuid())
+  createdAt     DateTime @default(now())
+
+  mantraId      String
+  mantra        Mantra   @relation(fields: [mantraId], references: [id], onDelete: Cascade)
+
+  /// 1-based word position within the padapātha sequence
+  wordIndex     Int
+
+  /// The full Padapātha form with accent marks and avagraha notation
+  pada          String
+
+  /// Root lemma (accent-stripped nominal form), e.g. "अग्नि"
+  lemma         String
+
+  /// Morphological tag string, comma-separated, e.g. "noun, masc, acc, sg"
+  grammar       String   @default("")
+
+  /// English gloss / literal meaning
+  literalMeaning String  @default("")
+
+  /// Maps samhita token indices → [word_index, …] — stored as JSON
+  /// Example: {"0": [1, 2], "1": [3]} means token 0 covers words 1+2, token 1 covers word 3
+  tokenMapping  Json?
+
+  @@unique([mantraId, wordIndex])
+  @@index([mantraId])
+  @@index([lemma])
+  @@map("pada_tokens")
+}
