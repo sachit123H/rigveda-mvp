@@ -5,16 +5,43 @@
  *
  * Interactive "use client" leaf component — HCI Layered Disclosure Reader
  *
+ * ── Re-render Optimization Strategy ─────────────────────────────────────────
+ *
+ * Problem: In the naive implementation, every token click or padapātha toggle
+ * caused the entire mantras list to re-render, including all MantraCard and
+ * WordInspectorCard instances.
+ *
+ * Solution — three complementary patterns:
+ *
+ *  1. `React.memo` on MantraCard
+ *     Each card only re-renders when its own mantra id, active state, padapātha
+ *     open state, or *its specific* selected token index changes. A token click
+ *     on Mantra 3 does not re-render Mantras 1, 2, 4, 5, …
+ *
+ *  2. `React.memo` on PhilologicalInspector + WordInspectorCard
+ *     The right-panel inspector only re-renders when `selectedWords` reference
+ *     changes. MantraCard renders do not affect it.
+ *
+ *  3. `useCallback` on all event handlers passed as props
+ *     Prevents new function references from invalidating React.memo comparisons
+ *     on every parent render.
+ *
+ *  4. `useMemo` for token arrays and kosha lookups
+ *     `getSamhitaTokens` is memoised per mantra inside MantraCard.
+ *     `getKoshaMeanings` is memoised per word inside WordInspectorCard.
+ *
+ * ── Layer Architecture ───────────────────────────────────────────────────────
+ *
  * Layer 0 — Samhitapātha: Canonical Devanāgarī with pitch accents (always visible)
- *            Tokens are clickable spans that trigger the Inspector.
+ *            Tokens are clickable buttons that trigger the Inspector.
  * Layer 1 — Padapātha toggle: Word-split analysis with danda separators,
  *            shown/hidden per mantra via a toggle button.
  * Layer 2 — Philological Inspector (right pane / mobile drawer):
  *            Grammar matrix tags + multi-dictionary SanskritKosha entries.
- * Comparative Panel — Bottom accordion: side-by-side translation vs. Sāyaṇabhāṣya.
+ * Comparative Panel — Bottom accordion: Sāyaṇabhāṣya / Mantra Apparatus / License.
  */
 
-import { useState } from "react";
+import { useState, useCallback, useMemo, memo } from "react";
 import Link from "next/link";
 import { MantraData, PadaWord } from "@/lib/mantra-loader";
 
@@ -101,9 +128,16 @@ function getKoshaMeanings(lemma: string, literal: string): DictionaryEntry {
   );
 }
 
-// ── Sāyaṇa Panel ──────────────────────────────────────────────────────────────
+// ── Selected Token Identity ───────────────────────────────────────────────────
 
-function SayanaPanel({ mantra }: { mantra: MantraData }) {
+interface SelectedToken {
+  mantraIndex: number;
+  tokenIndex: number;
+}
+
+// ── Sāyaṇa Panel ─────────────────────────────────────────────────────────────
+
+const SayanaPanel = memo(function SayanaPanel({ mantra }: { mantra: MantraData }) {
   const [expanded, setExpanded] = useState(false);
   const text = mantra.commentary?.text || "";
   const THRESHOLD = 320;
@@ -158,12 +192,20 @@ function SayanaPanel({ mantra }: { mantra: MantraData }) {
       )}
     </div>
   );
-}
+});
 
 // ── Word Inspector Card ───────────────────────────────────────────────────────
 
-function WordInspectorCard({ word }: { word: PadaWord }) {
-  const dictEntry = getKoshaMeanings(word.lemma, word.literal_meaning);
+/**
+ * Memoised: only re-renders when `word` prop reference changes.
+ * `getKoshaMeanings` result is memoised by lemma + literal_meaning.
+ */
+const WordInspectorCard = memo(function WordInspectorCard({ word }: { word: PadaWord }) {
+  // Memoize the expensive dictionary lookup — same lemma always returns same entry
+  const dictEntry = useMemo(
+    () => getKoshaMeanings(word.lemma, word.literal_meaning),
+    [word.lemma, word.literal_meaning]
+  );
 
   return (
     <div className="bg-white rounded-2xl p-5 shadow-sm border border-stone-200/60">
@@ -250,7 +292,256 @@ function WordInspectorCard({ word }: { word: PadaWord }) {
       </div>
     </div>
   );
+});
+
+// ── Philological Inspector (isolated right-panel component) ───────────────────
+
+/**
+ * Memoised: re-renders ONLY when `selectedWords` changes.
+ * Completely decoupled from MantraCard renders — clicking inside the card list
+ * does not re-render this component unless the word selection itself changes.
+ */
+const PhilologicalInspector = memo(function PhilologicalInspector({
+  selectedWords,
+}: {
+  selectedWords: PadaWord[];
+}) {
+  return (
+    <aside className="hidden lg:block lg:w-1/3 bg-stone-100 p-6 overflow-y-auto max-h-[calc(100vh-73px)] border-l border-stone-200">
+      <div className="sticky top-0 space-y-6">
+        <div>
+          <h2 className="text-xs font-bold uppercase tracking-widest text-stone-400 mb-2">
+            Philological Inspector
+          </h2>
+          <h3 className="text-lg font-serif font-bold text-stone-800 border-b border-stone-200 pb-3">
+            Word-by-Word Breakdown
+          </h3>
+        </div>
+
+        {selectedWords.length > 0 ? (
+          <div className="space-y-6">
+            {selectedWords.map((word) => (
+              <WordInspectorCard key={word.word_index} word={word} />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-20 px-6 border-2 border-dashed border-stone-300 rounded-2xl">
+            <p className="text-sm text-stone-400 font-serif leading-relaxed">
+              Click on any Sanskrit word in the Samhitapātha to view its Padapātha alignment,
+              root lemma, grammatical cases, and multi-dictionary meanings (Monier-Williams,
+              Apte, Macdonell, Grassmann).
+            </p>
+          </div>
+        )}
+      </div>
+    </aside>
+  );
+});
+
+// ── MantraCard ────────────────────────────────────────────────────────────────
+
+interface MantraCardProps {
+  mantra: MantraData;
+  mantraIndex: number;
+  isActive: boolean;
+  isPadaOpen: boolean;
+  selectedTokenIndex: SelectedToken | null;
+  onActivate: (idx: number) => void;
+  onTokenClick: (mantraIdx: number, token: string, tokenIdx: number, mantra: MantraData) => void;
+  onTogglePada: (mantraIdx: number) => void;
+  onWordSelect: (mantraIdx: number, word: PadaWord) => void;
 }
+
+/**
+ * Memoised with a custom comparator.
+ *
+ * Re-renders only when:
+ *  - mantra.id changes (different data)
+ *  - isActive changes (border/ring highlight)
+ *  - isPadaOpen changes (layer 1 toggle)
+ *  - selectedTokenIndex changes for THIS mantra (token highlight)
+ *
+ * Stable `onActivate`, `onTokenClick`, `onTogglePada`, `onWordSelect` references
+ * (ensured by `useCallback` in the parent) prevent false positives here.
+ */
+const MantraCard = memo(
+  function MantraCard({
+    mantra,
+    mantraIndex,
+    isActive,
+    isPadaOpen,
+    selectedTokenIndex,
+    onActivate,
+    onTokenClick,
+    onTogglePada,
+    onWordSelect,
+  }: MantraCardProps) {
+    // Memoize token array — only recomputes if samhitapatha text changes
+    const tokens = useMemo(
+      () => mantra.samhitapatha.split(/\s+/).filter(Boolean),
+      [mantra.samhitapatha]
+    );
+
+    return (
+      <article
+        onClick={() => onActivate(mantraIndex)}
+        className={`p-6 rounded-2xl border transition-all duration-300 bg-white cursor-pointer ${
+          isActive
+            ? "border-amber-500 shadow-md ring-1 ring-amber-500/25"
+            : "border-stone-200/80 hover:border-stone-300 hover:shadow-sm"
+        }`}
+      >
+        {/* Mantra Header */}
+        <div className="flex justify-between items-center mb-4 pb-2 border-b border-stone-100">
+          <span className="text-xs font-bold uppercase tracking-widest text-amber-700">
+            Mantra {mantra.mantra}
+          </span>
+          <span className="text-[10px] text-stone-400 font-medium">
+            {mantra.meter} • {mantra.deity}
+          </span>
+        </div>
+
+        {/* ── LAYER 0: Samhitapātha ── */}
+        <div className="mb-5 leading-relaxed">
+          <div
+            className="flex flex-wrap gap-x-2 gap-y-3 font-deva text-2xl md:text-3xl text-stone-800 tracking-wide"
+            lang="sa"
+          >
+            {tokens.map((token, tIdx) => {
+              const isPunct = token === "।" || token === "॥";
+              const isSelectedToken =
+                selectedTokenIndex?.mantraIndex === mantraIndex &&
+                selectedTokenIndex?.tokenIndex === tIdx;
+
+              return isPunct ? (
+                <span key={tIdx} className="text-stone-400 select-none">
+                  {token}
+                </span>
+              ) : (
+                <button
+                  key={tIdx}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onTokenClick(mantraIndex, token, tIdx, mantra);
+                  }}
+                  className={`relative inline-block transition-all px-1.5 py-0.5 rounded cursor-pointer ${
+                    isSelectedToken
+                      ? "bg-amber-100 text-amber-900 font-bold border-b-2 border-amber-500"
+                      : "hover:bg-stone-100 text-stone-800 hover:text-amber-800"
+                  }`}
+                  title="Click to inspect word"
+                >
+                  {token}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* ── LAYER 1: Padapātha Toggle ── */}
+        <div className="mb-5">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onTogglePada(mantraIndex);
+            }}
+            className={`flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full border transition-all ${
+              isPadaOpen
+                ? "bg-amber-50 text-amber-800 border-amber-200"
+                : "bg-stone-50 text-stone-500 border-stone-200 hover:border-amber-300 hover:text-amber-700"
+            }`}
+          >
+            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                d={isPadaOpen ? "M5 15l7-7 7 7" : "M19 9l-7 7-7-7"} />
+            </svg>
+            {isPadaOpen ? "Hide" : "Show"} Padapātha
+          </button>
+
+          {isPadaOpen && (
+            <div className="mt-3 p-4 bg-stone-50 rounded-xl border border-stone-200 overflow-x-auto">
+              <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-3">
+                Padapātha — Word Analysis
+              </p>
+              <div className="flex flex-wrap items-baseline gap-x-0 gap-y-2" lang="sa">
+                {mantra.padapatha.map((word, wIdx) => (
+                  <span key={word.word_index} className="inline-flex items-baseline">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onWordSelect(mantraIndex, word);
+                      }}
+                      className="font-deva text-lg text-stone-700 hover:text-amber-800 hover:bg-amber-50 px-1.5 py-0.5 rounded transition-colors cursor-pointer"
+                      title={`Word #${word.word_index}: ${word.lemma}`}
+                    >
+                      {word.pada}
+                    </button>
+                    {wIdx < mantra.padapatha.length - 1 && (
+                      <span className="text-amber-500 mx-0.5 text-sm select-none">।</span>
+                    )}
+                  </span>
+                ))}
+              </div>
+
+              {/* Compact grammar table */}
+              <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {mantra.padapatha.map((word) => (
+                  <div
+                    key={word.word_index}
+                    className="flex items-start gap-2 text-[10px] p-2 bg-white rounded-lg border border-stone-100"
+                  >
+                    <span className="font-deva text-stone-800 font-bold shrink-0">
+                      {word.pada}
+                    </span>
+                    <span className="text-stone-400">·</span>
+                    <div>
+                      <span className="text-stone-600">{word.literal_meaning}</span>
+                      <div className="flex flex-wrap gap-1 mt-0.5">
+                        {word.grammar.split(",").slice(0, 3).map((g, i) => (
+                          <span
+                            key={i}
+                            className="bg-stone-100 text-stone-500 px-1.5 py-px rounded text-[9px] uppercase tracking-wide"
+                          >
+                            {g.trim()}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Translation */}
+        <div className="text-stone-600 leading-relaxed font-serif text-base text-justify pl-3 border-l-2 border-stone-200">
+          {mantra.translation.fluid_text}
+        </div>
+      </article>
+    );
+  },
+  // Custom comparator — skip re-render unless relevant props changed
+  (prev, next) => {
+    if (prev.mantra.id !== next.mantra.id) return false;
+    if (prev.isActive !== next.isActive) return false;
+    if (prev.isPadaOpen !== next.isPadaOpen) return false;
+    // Only compare selectedTokenIndex for THIS card's mantra index
+    const prevToken = prev.selectedTokenIndex?.mantraIndex === prev.mantraIndex
+      ? prev.selectedTokenIndex
+      : null;
+    const nextToken = next.selectedTokenIndex?.mantraIndex === next.mantraIndex
+      ? next.selectedTokenIndex
+      : null;
+    if (prevToken?.tokenIndex !== nextToken?.tokenIndex) return false;
+    // Handlers stabilised by useCallback — reference equality check is O(1)
+    if (prev.onActivate !== next.onActivate) return false;
+    if (prev.onTokenClick !== next.onTokenClick) return false;
+    if (prev.onTogglePada !== next.onTogglePada) return false;
+    if (prev.onWordSelect !== next.onWordSelect) return false;
+    return true; // equal — skip re-render
+  }
+);
 
 // ── Main Client Component ─────────────────────────────────────────────────────
 
@@ -273,13 +564,10 @@ export default function VedaViewerClient({
   divisionLabel,
   subdivisionLabel,
 }: VedaViewerClientProps) {
-  // ── Client State ───────────────────────────────────────────────────────────
+  // ── Client State ────────────────────────────────────────────────────────────
   const [activeMantraIndex, setActiveMantraIndex] = useState<number>(0);
   const [selectedWords, setSelectedWords] = useState<PadaWord[]>([]);
-  const [selectedTokenIndex, setSelectedTokenIndex] = useState<{
-    mantraIndex: number;
-    tokenIndex: number;
-  } | null>(null);
+  const [selectedTokenIndex, setSelectedTokenIndex] = useState<SelectedToken | null>(null);
   const [padaLayerOpen, setPadaLayerOpen] = useState<Record<number, boolean>>({});
   const [activeCommentaryTab, setActiveCommentaryTab] = useState<
     "sayana" | "metadata" | "license"
@@ -287,40 +575,39 @@ export default function VedaViewerClient({
   const [isInspectorOpenMobile, setIsInspectorOpenMobile] = useState<boolean>(false);
 
   const activeMantra = mantras[activeMantraIndex] ?? mantras[0];
-
-  // ── Helpers ────────────────────────────────────────────────────────────────
-
-  const getSamhitaTokens = (samhitapatha: string) =>
-    samhitapatha.split(/\s+/).filter(Boolean);
-
-  const getPadasForToken = (tokenIdx: number, mantra: MantraData): number[] => {
-    if (mantra?.token_mapping) {
-      return mantra.token_mapping[tokenIdx.toString()] ?? [];
-    }
-    return [];
-  };
-
-  const handleTokenClick = (
-    mantraIdx: number,
-    token: string,
-    tokenIdx: number,
-    mantra: MantraData
-  ) => {
-    if (token === "।" || token === "॥") return;
-    setActiveMantraIndex(mantraIdx);
-    setSelectedTokenIndex({ mantraIndex: mantraIdx, tokenIndex: tokenIdx });
-    const padaIndices = getPadasForToken(tokenIdx, mantra);
-    setSelectedWords(mantra.padapatha.filter((w) => padaIndices.includes(w.word_index)));
-    setIsInspectorOpenMobile(true);
-  };
-
-  const togglePadaLayer = (mantraIdx: number) => {
-    setPadaLayerOpen((prev) => ({ ...prev, [mantraIdx]: !prev[mantraIdx] }));
-  };
-
   const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
-  // ── Render ─────────────────────────────────────────────────────────────────
+  // ── Stable Callbacks (useCallback ensures MantraCard memo is not invalidated) ──
+
+  const handleActivate = useCallback((idx: number) => {
+    setActiveMantraIndex(idx);
+  }, []);
+
+  const handleTokenClick = useCallback(
+    (mantraIdx: number, token: string, tokenIdx: number, mantra: MantraData) => {
+      if (token === "।" || token === "॥") return;
+      setActiveMantraIndex(mantraIdx);
+      setSelectedTokenIndex({ mantraIndex: mantraIdx, tokenIndex: tokenIdx });
+      const padaIndices =
+        mantra.token_mapping?.[tokenIdx.toString()] ?? [];
+      setSelectedWords(mantra.padapatha.filter((w) => padaIndices.includes(w.word_index)));
+      setIsInspectorOpenMobile(true);
+    },
+    []
+  );
+
+  const handleTogglePada = useCallback((mantraIdx: number) => {
+    setPadaLayerOpen((prev) => ({ ...prev, [mantraIdx]: !prev[mantraIdx] }));
+  }, []);
+
+  const handleWordSelect = useCallback((mantraIdx: number, word: PadaWord) => {
+    setActiveMantraIndex(mantraIdx);
+    setSelectedWords([word]);
+    setSelectedTokenIndex(null);
+    setIsInspectorOpenMobile(true);
+  }, []);
+
+  // ── Render ───────────────────────────────────────────────────────────────────
 
   return (
     <main className="min-h-screen bg-[#fbfbf9] text-[#1c1917] font-sans flex flex-col selection:bg-amber-100">
@@ -359,155 +646,20 @@ export default function VedaViewerClient({
         ════════════════════════════════════════════════════════════════ */}
         <div className="flex-grow lg:w-2/3 p-6 md:p-8 space-y-8 overflow-y-auto max-h-[calc(100vh-73px)] border-r border-stone-200">
           <div className="max-w-3xl mx-auto space-y-8 pb-12">
-
-            {mantras.map((mantra, mIdx) => {
-              const tokens = getSamhitaTokens(mantra.samhitapatha);
-              const isActiveMantra = activeMantraIndex === mIdx;
-              const isPadaOpen = !!padaLayerOpen[mIdx];
-
-              return (
-                <article
-                  key={mantra.id}
-                  onClick={() => setActiveMantraIndex(mIdx)}
-                  className={`p-6 rounded-2xl border transition-all duration-300 bg-white cursor-pointer ${
-                    isActiveMantra
-                      ? "border-amber-500 shadow-md ring-1 ring-amber-500/25"
-                      : "border-stone-200/80 hover:border-stone-300 hover:shadow-sm"
-                  }`}
-                >
-                  {/* Mantra Header */}
-                  <div className="flex justify-between items-center mb-4 pb-2 border-b border-stone-100">
-                    <span className="text-xs font-bold uppercase tracking-widest text-amber-700">
-                      Mantra {mantra.mantra}
-                    </span>
-                    <span className="text-[10px] text-stone-400 font-medium">
-                      {mantra.meter} • {mantra.deity}
-                    </span>
-                  </div>
-
-                  {/* ── LAYER 0: Samhitapātha ── */}
-                  <div className="mb-5 leading-relaxed">
-                    <div
-                      className="flex flex-wrap gap-x-2 gap-y-3 font-deva text-2xl md:text-3xl text-stone-800 tracking-wide"
-                      lang="sa"
-                    >
-                      {tokens.map((token, tIdx) => {
-                        const isPunct = token === "।" || token === "॥";
-                        const isSelectedToken =
-                          selectedTokenIndex?.mantraIndex === mIdx &&
-                          selectedTokenIndex?.tokenIndex === tIdx;
-
-                        return isPunct ? (
-                          <span key={tIdx} className="text-stone-400 select-none">
-                            {token}
-                          </span>
-                        ) : (
-                          <button
-                            key={tIdx}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleTokenClick(mIdx, token, tIdx, mantra);
-                            }}
-                            className={`relative inline-block transition-all px-1.5 py-0.5 rounded cursor-pointer ${
-                              isSelectedToken
-                                ? "bg-amber-100 text-amber-900 font-bold border-b-2 border-amber-500"
-                                : "hover:bg-stone-100 text-stone-800 hover:text-amber-800"
-                            }`}
-                            title="Click to inspect word"
-                          >
-                            {token}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* ── LAYER 1: Padapātha Toggle ── */}
-                  <div className="mb-5">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        togglePadaLayer(mIdx);
-                      }}
-                      className={`flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full border transition-all ${
-                        isPadaOpen
-                          ? "bg-amber-50 text-amber-800 border-amber-200"
-                          : "bg-stone-50 text-stone-500 border-stone-200 hover:border-amber-300 hover:text-amber-700"
-                      }`}
-                    >
-                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                          d={isPadaOpen ? "M5 15l7-7 7 7" : "M19 9l-7 7-7-7"} />
-                      </svg>
-                      {isPadaOpen ? "Hide" : "Show"} Padapātha
-                    </button>
-
-                    {isPadaOpen && (
-                      <div className="mt-3 p-4 bg-stone-50 rounded-xl border border-stone-200 overflow-x-auto">
-                        <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-3">
-                          Padapātha — Word Analysis
-                        </p>
-                        <div className="flex flex-wrap items-baseline gap-x-0 gap-y-2" lang="sa">
-                          {mantra.padapatha.map((word, wIdx) => (
-                            <span key={word.word_index} className="inline-flex items-baseline">
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setActiveMantraIndex(mIdx);
-                                  setSelectedWords([word]);
-                                  setSelectedTokenIndex(null);
-                                  setIsInspectorOpenMobile(true);
-                                }}
-                                className="font-deva text-lg text-stone-700 hover:text-amber-800 hover:bg-amber-50 px-1.5 py-0.5 rounded transition-colors cursor-pointer"
-                                title={`Word #${word.word_index}: ${word.lemma}`}
-                              >
-                                {word.pada}
-                              </button>
-                              {wIdx < mantra.padapatha.length - 1 && (
-                                <span className="text-amber-500 mx-0.5 text-sm select-none">।</span>
-                              )}
-                            </span>
-                          ))}
-                        </div>
-
-                        {/* Compact grammar table */}
-                        <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
-                          {mantra.padapatha.map((word) => (
-                            <div
-                              key={word.word_index}
-                              className="flex items-start gap-2 text-[10px] p-2 bg-white rounded-lg border border-stone-100"
-                            >
-                              <span className="font-deva text-stone-800 font-bold shrink-0">
-                                {word.pada}
-                              </span>
-                              <span className="text-stone-400">·</span>
-                              <div>
-                                <span className="text-stone-600">{word.literal_meaning}</span>
-                                <div className="flex flex-wrap gap-1 mt-0.5">
-                                  {word.grammar.split(",").slice(0, 3).map((g, i) => (
-                                    <span
-                                      key={i}
-                                      className="bg-stone-100 text-stone-500 px-1.5 py-px rounded text-[9px] uppercase tracking-wide"
-                                    >
-                                      {g.trim()}
-                                    </span>
-                                  ))}
-                                </div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Translation */}
-                  <div className="text-stone-600 leading-relaxed font-serif text-base text-justify pl-3 border-l-2 border-stone-200">
-                    {mantra.translation.fluid_text}
-                  </div>
-                </article>
-              );
-            })}
+            {mantras.map((mantra, mIdx) => (
+              <MantraCard
+                key={mantra.id}
+                mantra={mantra}
+                mantraIndex={mIdx}
+                isActive={activeMantraIndex === mIdx}
+                isPadaOpen={!!padaLayerOpen[mIdx]}
+                selectedTokenIndex={selectedTokenIndex}
+                onActivate={handleActivate}
+                onTokenClick={handleTokenClick}
+                onTogglePada={handleTogglePada}
+                onWordSelect={handleWordSelect}
+              />
+            ))}
           </div>
 
           {/* ── Comparative Panel (Bottom Accordion) ── */}
@@ -583,36 +735,9 @@ export default function VedaViewerClient({
         </div>
 
         {/* ════════════════════════════════════════════════════════════════
-            RIGHT PANE — Philological Inspector (Layer 2)
+            RIGHT PANE — Philological Inspector (Layer 2, isolated component)
         ════════════════════════════════════════════════════════════════ */}
-        <aside className="hidden lg:block lg:w-1/3 bg-stone-100 p-6 overflow-y-auto max-h-[calc(100vh-73px)] border-l border-stone-200">
-          <div className="sticky top-0 space-y-6">
-            <div>
-              <h2 className="text-xs font-bold uppercase tracking-widest text-stone-400 mb-2">
-                Philological Inspector
-              </h2>
-              <h3 className="text-lg font-serif font-bold text-stone-800 border-b border-stone-200 pb-3">
-                Word-by-Word Breakdown
-              </h3>
-            </div>
-
-            {selectedWords.length > 0 ? (
-              <div className="space-y-6">
-                {selectedWords.map((word) => (
-                  <WordInspectorCard key={word.word_index} word={word} />
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-20 px-6 border-2 border-dashed border-stone-300 rounded-2xl">
-                <p className="text-sm text-stone-400 font-serif leading-relaxed">
-                  Click on any Sanskrit word in the Samhitapātha to view its Padapātha alignment,
-                  root lemma, grammatical cases, and multi-dictionary meanings (Monier-Williams,
-                  Apte, Macdonell, Grassmann).
-                </p>
-              </div>
-            )}
-          </div>
-        </aside>
+        <PhilologicalInspector selectedWords={selectedWords} />
 
         {/* ════════════════════════════════════════════════════════════════
             MOBILE BOTTOM DRAWER — Philological Inspector
